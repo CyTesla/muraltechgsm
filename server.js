@@ -4,11 +4,12 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 
 const app = express();
 
 // Security & logging
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(morgan('dev'));
 app.use(cors({
     origin: process.env.FRONTEND_URL || '*',
@@ -28,32 +29,42 @@ app.use('/api/', rateLimit({
     message: { error: 'Too many requests, please try again later.' },
 }));
 
-// Routes
-app.use('/api/auth', require('./api/routes/auth'));
-app.use('/api/files', require('./api/routes/files'));
-app.use('/api/categories', require('./api/routes/categories'));
-app.use('/api/favorites', require('./api/routes/favorites'));
-app.use('/api/payments', require('./api/routes/payments'));
-app.use('/api/admin', require('./api/routes/admin'));
-app.use('/api/upload', require('./api/routes/upload'));
+// Serve static files first
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Health check
+// Health check (no DB needed)
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-// Serve frontend static files
-app.use(express.static('public'));
-app.get('*', (req, res) => res.sendFile('index.html', { root: 'public' }));
+// API Routes — only load if DB is configured
+if (process.env.DATABASE_URL) {
+    app.use('/api/auth', require('./api/routes/auth'));
+    app.use('/api/files', require('./api/routes/files'));
+    app.use('/api/categories', require('./api/routes/categories'));
+    app.use('/api/favorites', require('./api/routes/favorites'));
+    app.use('/api/payments', require('./api/routes/payments'));
+    app.use('/api/admin', require('./api/routes/admin'));
+    app.use('/api/upload', require('./api/routes/upload'));
+} else {
+    app.use('/api', (req, res) => {
+        res.status(503).json({ error: 'Database not configured yet. Add DATABASE_URL to environment variables.' });
+    });
+}
 
-// 404 handler
-app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
+// Catch-all: serve frontend for all non-API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Only listen when running locally (not on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+}
 
 module.exports = app;
