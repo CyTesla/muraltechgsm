@@ -1,7 +1,7 @@
 {
-  "name": "gsm-hamza-clone",
+  "name": "muraltechgsm",
   "version": "1.0.0",
-  "description": "GSM Hamza - Mobile Firmware & Software Download Platform",
+  "description": "MuralTechGSM - Mobile Firmware & Software Download Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +9,7 @@
     "db:init": "node api/utils/initDb.js"
   },
   "keywords": ["gsm", "firmware", "samsung", "download"],
-  "author": "",
+  "author": "MuralTechGSM",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

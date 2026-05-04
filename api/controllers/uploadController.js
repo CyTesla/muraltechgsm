@@ -16,7 +16,7 @@ const uploadFile = async (req, res) => {
 
     try {
         const isImage = req.file.mimetype.startsWith('image/');
-        const folder = isImage ? 'gsm-hamza/thumbnails' : 'gsm-hamza/files';
+        const folder = isImage ? 'muraltechgsm/thumbnails' : 'muraltechgsm/files';
 
         const result = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(

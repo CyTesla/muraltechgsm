@@ -1,4 +1,4 @@
-// GSM Hamza Clone - JavaScript Functionality
+// MuralTechGSM - JavaScript Functionality
 const API_BASE = '/api';
 
 class GSMHamzaApp {
@@ -50,7 +50,7 @@ class GSMHamzaApp {
                     <p class="app-desc">${f.description || ''}</p>
                     <div class="app-meta">
                         <span class="category">${f.category_name || ''}</span>
-                        <span class="author">${f.author || 'GSM Hamza'}</span>
+                        <span class="author">${f.author || 'MuralTechGSM'}</span>
                         <span class="date">${new Date(f.updated_at || f.created_at).toLocaleDateString()}</span>
                     </div>
                     <div class="app-stats">
@@ -482,7 +482,7 @@ class GSMHamzaApp {
                 <p class="app-desc">${data.desc}</p>
                 <div class="app-meta">
                     <span class="category">${data.category}</span>
-                    <span class="author">GSM Hamza</span>
+                    <span class="author">MuralTechGSM</span>
                     <span class="date">Updated: Feb 20, 2025</span>
                 </div>
                 <div class="app-stats">
