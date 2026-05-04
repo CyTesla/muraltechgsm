@@ -40,11 +40,9 @@ app.use('/api/upload', require('./api/routes/upload'));
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-// Serve frontend static files in production
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('.'));
-    app.get('*', (req, res) => res.sendFile('index.html', { root: '.' }));
-}
+// Serve frontend static files
+app.use(express.static('public'));
+app.get('*', (req, res) => res.sendFile('index.html', { root: 'public' }));
 
 // 404 handler
 app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
